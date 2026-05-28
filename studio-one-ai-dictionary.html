@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio One 7 PRO AI Dictionary</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #e8a020;
+    --accent2: #c06010;
+    --text: #e8e8f0;
+    --text-dim: #8888aa;
+    --text-muted: #4a4a6a;
+    --green: #20c870;
+    --red: #e84040;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,160,32,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,160,32,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 40px;
+  }
+
+  .logo-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .logo-badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    letter-spacing: 2px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 64px);
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 8px;
+  }
+
+  /* API Key Section */
+  .api-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .api-section h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .api-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .api-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .api-input:focus {
+    border-color: var(--accent);
+  }
+
+  .api-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { background: #f0b030; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+  .btn-clear {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .btn-clear:hover { border-color: var(--red); color: var(--red); background: transparent; }
+
+  .api-status {
+    margin-top: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+  .status-dot.connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status-dot.error { background: var(--red); }
+
+  /* Quick Topics */
+  .topics-section {
+    margin-bottom: 28px;
+  }
+
+  .topics-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .topics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topic-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .topic-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,160,32,0.05);
+  }
+
+  /* Chat Area */
+  .chat-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    min-height: 400px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding: 24px;
+    margin-bottom: 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-track { background: var(--bg); }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 320px;
+    gap: 16px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    opacity: 0.3;
+  }
+
+  .empty-state p {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    line-height: 1.8;
+  }
+
+  /* Messages */
+  .message {
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .message-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    font-weight: 700;
+  }
+
+  .role-user { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+  .role-ai { background: var(--accent); color: #000; }
+
+  .message-body {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    padding-left: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .message-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 1px 6px;
+    color: var(--accent);
+  }
+
+  .message-body strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Typing indicator */
+  .typing {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 16px 0;
+  }
+
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: typingPulse 1.2s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingPulse {
+    0%, 60%, 100% { opacity: 0.2; transform: scale(0.8); }
+    30% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Input Row */
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .question-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    padding: 14px 18px;
+    outline: none;
+    resize: none;
+    height: 54px;
+    transition: border-color 0.2s;
+  }
+
+  .question-input:focus { border-color: var(--accent); }
+  .question-input::placeholder { color: var(--text-muted); }
+
+  /* History */
+  .history-section {
+    margin-top: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .history-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .history-clear {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  .history-clear:hover { color: var(--red); }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.15s;
+    overflow: hidden;
+  }
+
+  .history-item:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .history-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .history-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+  }
+
+  .footer-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .api-input-row { flex-direction: column; }
+    .input-row { flex-direction: column; }
+    .question-input { height: 80px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo-line">
+      <div class="logo-badge">AI DICTIONARY</div>
+    </div>
+    <h1>STUDIO ONE 7 <span>PRO</span></h1>
+    <div class="subtitle">// POWERED BY CLAUDE API — YOUR KEY, YOUR CONTROL</div>
+  </header>
+
+  <!-- API Key -->
+  <div class="api-section">
+    <h2>// CLAUDE API KEY</h2>
+    <div class="api-input-row">
+      <input
+        type="password"
+        class="api-input"
+        id="apiKey"
+        placeholder="sk-ant-api03-..."
+      />
+      <button class="btn" onclick="saveKey()">CONNECT</button>
+      <button class="btn btn-clear" onclick="clearKey()">CLEAR</button>
+    </div>
+    <div class="api-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText" style="color: var(--text-muted); font-size:11px;">Enter your Claude API key to get started</span>
+    </div>
+  </div>
+
+  <!-- Quick Topics -->
+  <div class="topics-section">
+    <div class="topics-label">// QUICK QUESTIONS</div>
+    <div class="topics-grid">
+      <button class="topic-btn" onclick="setQuestion('How do I use MIDI Note Expression in Studio One 7 PRO?')">MIDI Note Expression</button>
+      <button class="topic-btn" onclick="setQuestion('How do I fix pitch with Melodyne ARA2 in Studio One 7 PRO?')">Melodyne ARA2</button>
+      <button class="topic-btn" onclick="setQuestion('What LUFS target should I use for Spotify and YouTube mastering?')">LUFS Mastering</button>
+      <button class="topic-btn" onclick="setQuestion('How do I use Audio Bend for rhythm correction?')">Audio Bend</button>
+      <button class="topic-btn" onclick="setQuestion('How does the Scratch Pad work in Studio One 7 PRO?')">Scratch Pad</button>
+      <button class="topic-btn" onclick="setQuestion('How do I use the Show Page for live performance?')">Show Page</button>
+      <button class="topic-btn" onclick="setQuestion('How do I export stems from Studio One 7 PRO?')">Stem Export</button>
+      <button class="topic-btn" onclick="setQuestion('How do I assign samples to Impact XT pads?')">Impact XT</button>
+      <button class="topic-btn" onclick="setQuestion('What is the best workflow for polishing Suno AI-generated audio in Studio One 7 PRO?')">Suno → Studio One</button>
+      <button class="topic-btn" onclick="setQuestion('How do I use Pipeline XT to loop through external hardware?')">Pipeline XT</button>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat-area" id="chatArea">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🎛️</div>
+      <p>ASK ANYTHING ABOUT STUDIO ONE 7 PRO<br>English or Japanese — both supported<br><br>// TYPE YOUR QUESTION BELOW</p>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-row">
+    <textarea
+      class="question-input"
+      id="questionInput"
+      placeholder="Ask anything about Studio One 7 PRO..."
+      onkeydown="handleKeydown(event)"
+    ></textarea>
+    <button class="btn" id="sendBtn" onclick="sendQuestion()">SEND</button>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="historySection" style="display:none;">
+    <div class="history-label">
+      <span>// QUESTION HISTORY</span>
+      <button class="history-clear" onclick="clearHistory()">Clear All</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">YOS STUDIO</div>
+    <div class="footer-note">Studio One 7 PRO AI Dictionary v1.0</div>
+  </footer>
+
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are an expert AI assistant specializing in Studio One 7 PRO.
+
+AREAS OF EXPERTISE:
+- All features of Studio One 7 PRO: mixing, mastering, MIDI, audio editing, arrangement
+- Built-in plugins: Fat Channel XT, Pro EQ3, Pro Compressor, Multiband Dynamics, Limiter, Delay, Reverb, and more
+- Melodyne ARA2 integration for pitch and time editing
+- Internal instruments: Impact XT, Sample One XT, Mai Tai, Presence XT
+- Show Page for live performance
+- Pipeline XT for external hardware loopback
+- AI music production workflows (e.g. polishing Suno-generated audio in Studio One)
+- Streaming-ready mastering: LUFS targets for Spotify, YouTube, Apple Music
+- Keyboard shortcuts and efficient workflows
+
+RESPONSE STYLE:
+- Default language: English. If the user writes in Japanese, respond in Japanese.
+- Use numbered steps for procedures — clear and actionable
+- Always include specific values (dB, Hz, ms, LUFS) where relevant
+- Mention exact menu names, panel names, and on-screen locations in Studio One 7 PRO
+- Keep explanations accessible without being condescending
+
+BOUNDARIES:
+- Focus on Studio One 7 PRO. For other DAWs, acknowledge the difference briefly.
+- If uncertain, say so clearly: "I'd recommend verifying this in the official documentation."`;
+
+let apiKey = localStorage.getItem('s1_api_key') || '';
+let conversationHistory = [];
+let questionHistory = JSON.parse(localStorage.getItem('s1_history') || '[]');
+
+// Init
+window.onload = () => {
+  if (apiKey) {
+    document.getElementById('apiKey').value = apiKey;
+    setStatus('connected', 'API key connected');
+  }
+  renderHistory();
+};
+
+function saveKey() {
+  const val = document.getElementById('apiKey').value.trim();
+  if (!val) { setStatus('error', 'Enter your Claude API key to get started'); return; }
+  if (!val.startsWith('sk-ant-')) { setStatus('error', 'Invalid API key format'); return; }
+  apiKey = val;
+  localStorage.setItem('s1_api_key', apiKey);
+  setStatus('connected', 'API key connected ✓');
+}
+
+function clearKey() {
+  apiKey = '';
+  localStorage.removeItem('s1_api_key');
+  document.getElementById('apiKey').value = '';
+  setStatus('', 'Enter your Claude API key to get started');
+}
+
+function setStatus(state, msg) {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  dot.className = 'status-dot' + (state ? ' ' + state : '');
+  text.textContent = msg;
+  text.style.color = state === 'connected' ? 'var(--green)' : state === 'error' ? 'var(--red)' : 'var(--text-muted)';
+}
+
+function setQuestion(q) {
+  document.getElementById('questionInput').value = q;
+  document.getElementById('questionInput').focus();
+}
+
+function handleKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendQuestion();
+  }
+}
+
+async function sendQuestion() {
+  const input = document.getElementById('questionInput');
+  const question = input.value.trim();
+  if (!question) return;
+  if (!apiKey) { setStatus('error', 'Please enter your API key first'); return; }
+
+  input.value = '';
+  document.getElementById('sendBtn').disabled = true;
+
+  // Hide empty state
+  document.getElementById('emptyState').style.display = 'none';
+
+  // Add user message
+  conversationHistory.push({ role: 'user', content: question });
+  addMessageToUI('user', question);
+
+  // Add to history
+  addToHistory(question);
+
+  // Typing indicator
+  const typingId = showTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+
+    removeTyping(typingId);
+
+    if (!response.ok) {
+      const err = await response.json();
+      const msg = err.error?.message || 'APIエラーが発生しました';
+      addMessageToUI('ai', `⚠️ エラー: ${msg}`);
+      setStatus('error', 'API error');
+      conversationHistory.pop();
+      return;
+    }
+
+    const data = await response.json();
+    const answer = data.content[0].text;
+    conversationHistory.push({ role: 'assistant', content: answer });
+    addMessageToUI('ai', answer);
+    setStatus('connected', 'API key connected ✓');
+
+  } catch (e) {
+    removeTyping(typingId);
+    addMessageToUI('ai', `⚠️ 接続エラー: ${e.message}`);
+    setStatus('error', 'Connection failed');
+    conversationHistory.pop();
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function addMessageToUI(role, text) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'message';
+
+  const formattedText = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.*?)`/g, '<code>$1</code>');
+
+  div.innerHTML = `
+    <div class="message-header">
+      <span class="message-role ${role === 'user' ? 'role-user' : 'role-ai'}">
+        ${role === 'user' ? 'YOU' : 'S1 AI'}
+      </span>
+    </div>
+    <div class="message-body">${formattedText}</div>
+  `;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping() {
+  const area = document.getElementById('chatArea');
+  const id = 'typing_' + Date.now();
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'typing';
+  div.innerHTML = `
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  `;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function addToHistory(q) {
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  questionHistory.unshift({ q, time });
+  if (questionHistory.length > 20) questionHistory.pop();
+  localStorage.setItem('s1_history', JSON.stringify(questionHistory));
+  renderHistory();
+}
+
+function renderHistory() {
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  if (!questionHistory.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = questionHistory.map((item, i) => `
+    <div class="history-item" onclick="setQuestion('${item.q.replace(/'/g,"\\'")}')">
+      <span>${item.q}</span>
+      <span class="history-time">${item.time}</span>
+    </div>
+  `).join('');
+}
+
+function clearHistory() {
+  questionHistory = [];
+  localStorage.removeItem('s1_history');
+  renderHistory();
+}
+</script>
+</body>
+</html>
